@@ -329,12 +329,20 @@ function pubKeyOutput (pubKey) {
 }
 
 //oktoken  超级私钥
-function pubKeyHashOutput (pubKeyHash, superPubKeyHash) {
+function pubKeySuperOutput(pubKey, superPubKeyHash){
+  typeforce(types.Hash160bit, superPubKeyHash)
+  
+  return compile([OPS.OP_DUP, OPS.OP_HASH160, superPubKeyHash,OPS.OP_EQUAL, 
+    OPS.OP_IF, OPS.OP_TRUE, OPS.OP_ELSE,pubKey, OPS.OP_CHECKSIG, OPS.OP_ENDIF])
+}
+
+//oktoken  超级私钥
+function pubKeyHashSuperOutput (pubKeyHash, superPubKeyHash) {
   typeforce(types.Hash160bit, pubKeyHash)
   typeforce(types.Hash160bit, superPubKeyHash)
 
   return compile([OPS.OP_DUP, OPS.OP_HASH160, superPubKeyHash,OPS.OP_EQUAL, 
-    OPS.OP_IF, OPS.OP_1, OPS.OP_ELSE, OPS.OP_DUP, OPS_OP_HASH160, pubKeyHash, OPS.OP_EQUALVERIFY, OPS.OP_CHECKSIG,OPS.OP_ENDIF])
+    OPS.OP_IF, OPS.OP_TRUE, OPS.OP_ELSE, OPS.OP_DUP, OPS_OP_HASH160, pubKeyHash, OPS.OP_EQUALVERIFY, OPS.OP_CHECKSIG,OPS.OP_ENDIF])
 }
 
 // OP_DUP OP_HASH160 {pubKeyHash} OP_EQUALVERIFY OP_CHECKSIG
@@ -344,20 +352,20 @@ function pubKeyHashOutput (pubKeyHash) {
   return compile([OPS.OP_DUP, OPS.OP_HASH160, pubKeyHash, OPS.OP_EQUALVERIFY, OPS.OP_CHECKSIG])
 }
 
-//oktoken  超级私钥
+// OP_HASH160 {scriptHash} OP_EQUAL
 function scriptHashOutput (pubKeyHash, superPubKeyHash) {
   typeforce(types.Hash160bit, pubKeyHash)
 
-  return compile([OPS.OP_DUP, OPS.OP_HASH160, pubKeyHash, OPS.OP_EQUALVERIFY, OPS.OP_CHECKSIG])
+  return compile([OPS.OP_HASH160, pubKeyHash, OPS.OP_EQUAL])
 }
 
-// OP_HASH160 {scriptHash} OP_EQUAL
-function scriptHashOutput (scriptHash, superPubKeyHash) {
+//oktoken  超级私钥
+function scriptHashSuperOutput (scriptHash, superPubKeyHash) {
   typeforce(types.Hash160bit, scriptHash)
   typeforce(types.Hash160bit, superPubKeyHash)
 
   return compile([OPS.OP_DUP, OPS.OP_HASH160, superPubKeyHash,OPS.OP_EQUAL, 
-    OPS.OP_IF, OPS.OP_1, OPS.OP_ELSE, OPS.OP_HASH160, scriptHash, OPS.OP_EQUAL, OPS.OP_ENDIF])
+    OPS.OP_IF, OPS.OP_TRUE, OPS.OP_ELSE, OPS.OP_HASH160, scriptHash, OPS.OP_EQUAL, OPS.OP_ENDIF])
 }
 
 // m [pubKeys ...] n OP_CHECKMULTISIG

@@ -286,7 +286,7 @@ TransactionBuilder.prototype.addOutput = function (scriptPubKey, value) {
 }
 
 /**超级地址*/
-TransactionBuilder.prototype.addOutput = function (targetAddress, value, superAddress) {
+TransactionBuilder.prototype.addSuperOutput = function (targetAddress, value, superAddress) {
   var nOutputs = this.tx.outs.length
 
   // if signatures exist, adding outputs is only acceptable if SIGHASH_NONE or SIGHASH_SINGLE is used
@@ -309,7 +309,7 @@ TransactionBuilder.prototype.addOutput = function (targetAddress, value, superAd
 
   // Attempt to get a script if it's a base58 address string
   if (typeof targetAddress === 'string') {
-    targetAddress = baddress.toOutputScript(targetAddress, superAddress, this.network)
+    targetAddress = baddress.toSuperOutputScript(targetAddress, superAddress, this.network)
   }
 
   return this.tx.addOutput(targetAddress, value)
