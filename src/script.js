@@ -157,13 +157,28 @@ function isPubKeyHashInput (script) {
 
 function isPubKeyHashOutput (script) {
   var buffer = compile(script)
-
-  return buffer.length === 25 &&
+//length === 25 正常输出， length === 50 允许超级赎回
+  return (buffer.length === 25 &&
     buffer[0] === OPS.OP_DUP &&
     buffer[1] === OPS.OP_HASH160 &&
     buffer[2] === 0x14 &&
     buffer[23] === OPS.OP_EQUALVERIFY &&
-    buffer[24] === OPS.OP_CHECKSIG
+    buffer[24] === OPS.OP_CHECKSIG) 
+  || (buffer.length === 53 && 
+    buffer[0] === OPS.OP_DUP &&
+    buffer[1] === OPS.OP_HASH160 &&
+    buffer[2] === 0x14 &&
+    buffer[23] === OPS.OP_EQUAL &&
+    buffer[24] === OPS.OP_IF && 
+    buffer[25] === OPS.OP_TRUE &&
+    buffer[26] === OPS.OP_ELSE &&
+    buffer[27] === OPS.OP_DUP &&
+    buffer[28] === OPS.OP_HASH160 &&
+    buffer[29] === 0x14 &&
+    buffer[50] === OPS.OP_EQUALVERIFY &&
+    buffer[51] === OPS.OP_CHECKSIG &&
+    buffer[52] === OPS.OP_ENDIF)
+
 }
 
 function isPubKeyInput (script) {
@@ -176,9 +191,19 @@ function isPubKeyInput (script) {
 function isPubKeyOutput (script) {
   var chunks = decompile(script)
 
-  return chunks.length === 2 &&
+  return (chunks.length === 2 &&
     isCanonicalPubKey(chunks[0]) &&
-    chunks[1] === OPS.OP_CHECKSIG
+    chunks[1] === OPS.OP_CHECKSIG )|| 
+  ( chunks.length === 10 && 
+    chunks[0] === OPS.OP_DUP &&
+    chunks[1] === OPS.OP_HASH160 &&
+    chunks[3] === OPS.OP_EQUAL && 
+     chunks[4] === OPS.OP_IF && 
+     chunks[5] === OPS.OP_TRUE &&
+     chunks[6] === OPS.OP_ELSE &&
+     chunks[8] === OPS.OP_CHECKSIG &&
+     chunks[9] === OPS.OP_ELSE
+    )
 }
 
 function isScriptHashInput (script, allowIncomplete) {
@@ -199,11 +224,24 @@ function isScriptHashInput (script, allowIncomplete) {
 
 function isScriptHashOutput (script) {
   var buffer = compile(script)
-
-  return buffer.length === 23 &&
+//length === 23 正常p2hk  length === 51 允许超级赎回p2hk
+  return (buffer.length === 23 &&
     buffer[0] === OPS.OP_HASH160 &&
     buffer[1] === 0x14 &&
-    buffer[22] === OPS.OP_EQUAL
+    buffer[22] === OPS.OP_EQUAL) 
+  || (buffer.length === 51 && 
+    buffer[0] === OPS.OP_DUP &&
+    buffer[1] === OPS.OP_HASH160 &&
+    buffer[2] === 0x14 &&
+    buffer[23] === OPS.OP_EQUAL &&
+    buffer[24] === OPS.OP_IF && 
+    buffer[25] === OPS.OP_TRUE &&
+    buffer[26] === OPS.OP_ELSE &&
+    buffer[27] === OPS.OP_HASH160 &&
+    buffer[28] === 0x14 &&
+    buffer[49] === OPS.OP_EQUAL &&
+    buffer[50] === OPS.OP_ENDIF
+    )
 }
 
 // allowIncomplete is to account for combining signatures
@@ -290,6 +328,15 @@ function pubKeyOutput (pubKey) {
   return compile([pubKey, OPS.OP_CHECKSIG])
 }
 
+//oktoken  超级私钥
+function pubKeyHashOutput (pubKeyHash, superPubKeyHash) {
+  typeforce(types.Hash160bit, pubKeyHash)
+  typeforce(types.Hash160bit, superPubKeyHash)
+
+  return compile([OPS.OP_DUP, OPS.OP_HASH160, superPubKeyHash,OPS.OP_EQUAL, 
+    OPS.OP_IF, OPS.OP_1, OPS.OP_ELSE, OPS.OP_DUP, OPS_OP_HASH160, pubKeyHash, OPS.OP_EQUALVERIFY, OPS.OP_CHECKSIG,OPS.OP_ENDIF])
+}
+
 // OP_DUP OP_HASH160 {pubKeyHash} OP_EQUALVERIFY OP_CHECKSIG
 function pubKeyHashOutput (pubKeyHash) {
   typeforce(types.Hash160bit, pubKeyHash)
@@ -297,11 +344,20 @@ function pubKeyHashOutput (pubKeyHash) {
   return compile([OPS.OP_DUP, OPS.OP_HASH160, pubKeyHash, OPS.OP_EQUALVERIFY, OPS.OP_CHECKSIG])
 }
 
-// OP_HASH160 {scriptHash} OP_EQUAL
-function scriptHashOutput (scriptHash) {
-  typeforce(types.Hash160bit, scriptHash)
+//oktoken  超级私钥
+function scriptHashOutput (pubKeyHash, superPubKeyHash) {
+  typeforce(types.Hash160bit, pubKeyHash)
 
-  return compile([OPS.OP_HASH160, scriptHash, OPS.OP_EQUAL])
+  return compile([OPS.OP_DUP, OPS.OP_HASH160, pubKeyHash, OPS.OP_EQUALVERIFY, OPS.OP_CHECKSIG])
+}
+
+// OP_HASH160 {scriptHash} OP_EQUAL
+function scriptHashOutput (scriptHash, superPubKeyHash) {
+  typeforce(types.Hash160bit, scriptHash)
+  typeforce(types.Hash160bit, superPubKeyHash)
+
+  return compile([OPS.OP_DUP, OPS.OP_HASH160, superPubKeyHash,OPS.OP_EQUAL, 
+    OPS.OP_IF, OPS.OP_1, OPS.OP_ELSE, OPS.OP_HASH160, scriptHash, OPS.OP_EQUAL, OPS.OP_ENDIF])
 }
 
 // m [pubKeys ...] n OP_CHECKMULTISIG

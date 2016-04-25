@@ -285,6 +285,37 @@ TransactionBuilder.prototype.addOutput = function (scriptPubKey, value) {
   return this.tx.addOutput(scriptPubKey, value)
 }
 
+/**超级地址*/
+TransactionBuilder.prototype.addOutput = function (targetAddress, value, superAddress) {
+  var nOutputs = this.tx.outs.length
+
+  // if signatures exist, adding outputs is only acceptable if SIGHASH_NONE or SIGHASH_SINGLE is used
+  // throws if any signatures didn't use SIGHASH_NONE|SIGHASH_SINGLE
+  if (!this.inputs.every(function (input, index) {
+    // no signature
+    if (input.hashType === undefined) return true
+
+    var hashTypeMod = input.hashType & 0x1f
+    if (hashTypeMod === Transaction.SIGHASH_NONE) return true
+    if (hashTypeMod === Transaction.SIGHASH_SINGLE) {
+      // account for SIGHASH_SINGLE signing of a non-existing output, aka the "SIGHASH_SINGLE" bug
+      return index < nOutputs
+    }
+
+    return false
+  })) {
+    throw new Error('No, this would invalidate signatures')
+  }
+
+  // Attempt to get a script if it's a base58 address string
+  if (typeof targetAddress === 'string') {
+    targetAddress = baddress.toOutputScript(targetAddress, superAddress, this.network)
+  }
+
+  return this.tx.addOutput(targetAddress, value)
+}
+
+
 TransactionBuilder.prototype.build = function () {
   return this.__build(false)
 }

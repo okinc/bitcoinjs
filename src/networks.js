@@ -45,5 +45,27 @@ module.exports = {
     scriptHash: 0x16,
     wif: 0x9e,
     dustThreshold: 0 // https://github.com/dogecoin/dogecoin/blob/v1.7.1/src/core.h#L155-L160
+  },
+  oktoken: {
+    messagePrefix: '\x20OKToken Signed Message:\n',
+    bip32: {
+      public: 0x0488b21e,
+      private: 0x0488ade4
+    },
+    pubKeyHash: 0x2e,
+    scriptHash: 0x12,
+    wif: 0x80,
+    dustThreshold: 0
+  }
+  oktoken_testnet: {
+    messagePrefix: '\x20OKToken Signed Message:\n',
+    bip32: {
+      public: 0x0488b21e,
+      private: 0x0488ade4
+    },
+    pubKeyHash: 0x73,
+    scriptHash: 0x08,
+    wif: 0x80,
+    dustThreshold: 0
   }
 }

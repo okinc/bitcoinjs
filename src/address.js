@@ -44,6 +44,19 @@ function toOutputScript (address, network) {
   throw new Error(address + ' has no matching Script')
 }
 
+
+function toOutputScript (address, superAddress, network) {
+  network = network || networks.bitcoin
+
+  var decode = fromBase58Check(address)
+  var super = fromBase58Check(superAddress)
+  if (decode.version === network.pubKeyHash) return bscript.pubKeyHashOutput(decode.hash, super.hash)
+  if (decode.version === network.scriptHash) return bscript.scriptHashOutput(decode.hash, super.hash)
+
+  throw new Error(address + ' has no matching Script')
+}
+
+
 module.exports = {
   fromBase58Check: fromBase58Check,
   fromOutputScript: fromOutputScript,
