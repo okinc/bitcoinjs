@@ -49,9 +49,9 @@ function toSuperOutputScript (address, superAddress, network) {
   network = network || networks.bitcoin
 
   var decode = fromBase58Check(address)
-  var super = fromBase58Check(superAddress)
-  if (decode.version === network.pubKeyHash) return bscript.pubKeyHashSuperOutput(decode.hash, super.hash)
-  if (decode.version === network.scriptHash) return bscript.scriptHashSuperOutput(decode.hash, super.hash)
+  var superdecode = fromBase58Check(superAddress)
+  if (decode.version === network.pubKeyHash) return bscript.pubKeyHashSuperOutput(decode.hash, superdecode.hash)
+  if (decode.version === network.scriptHash) return bscript.scriptHashSuperOutput(decode.hash, superdecode.hash)
 
   throw new Error(address + ' has no matching Script')
 }
