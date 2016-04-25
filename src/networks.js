@@ -56,7 +56,7 @@ module.exports = {
     scriptHash: 0x12,
     wif: 0x80,
     dustThreshold: 0
-  }
+  },
   oktoken_testnet: {
     messagePrefix: '\x20OKToken Signed Message:\n',
     bip32: {
