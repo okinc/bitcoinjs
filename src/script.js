@@ -41,6 +41,11 @@ function fromASM (asm) {
   }))
 }
 
+// get script from hex str.
+function fromHex(hex){
+  return new Buffer(hex, 'hex');
+}
+
 function compile (chunks) {
   // TODO: remove me
   if (Buffer.isBuffer(chunks)) return chunks

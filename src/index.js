@@ -9,6 +9,7 @@ module.exports = {
   address: require('./address'),
   bufferutils: require('./bufferutils'),
   crypto: require('./crypto'),
+  CryptoJS: require('crypto-js'),
   message: require('./message'),
   networks: require('./networks'),
   opcodes: require('./opcodes'),

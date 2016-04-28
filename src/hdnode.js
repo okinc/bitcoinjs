@@ -126,6 +126,18 @@ HDNode.fromBase58 = function (string, networks) {
   return hd
 }
 
+// get HDNode from a random seed.
+HDNode.fromRandomSeed = function (size, network, options) {
+	if (seed.length < 16) throw new TypeError('Seed should be at least 128 bits')
+	if (seed.length > 64) throw new TypeError('Seed should be at most 512 bits')
+	
+	options = options || {};
+	var rng = options.rng || randomBytes;
+	var buffer = rng(size);
+	network = network || NETWORKS.bitcoin;
+	return HDNode.fromSeedBuffer(buffer, network);		
+}
+
 HDNode.prototype.getAddress = function () {
   return this.keyPair.getAddress()
 }
