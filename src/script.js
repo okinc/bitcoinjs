@@ -347,7 +347,7 @@ function pubKeyHashSuperOutput (pubKeyHash, superPubKeyHash) {
   typeforce(types.Hash160bit, superPubKeyHash)
 
   return compile([OPS.OP_DUP, OPS.OP_HASH160, superPubKeyHash,OPS.OP_EQUAL, 
-    OPS.OP_IF, OPS.OP_TRUE, OPS.OP_ELSE, OPS.OP_DUP, OPS_OP_HASH160, pubKeyHash, OPS.OP_EQUALVERIFY, OPS.OP_CHECKSIG,OPS.OP_ENDIF])
+    OPS.OP_IF, OPS.OP_TRUE, OPS.OP_ELSE, OPS.OP_DUP, OPS.OP_HASH160, pubKeyHash, OPS.OP_EQUALVERIFY, OPS.OP_CHECKSIG,OPS.OP_ENDIF])
 }
 
 // OP_DUP OP_HASH160 {pubKeyHash} OP_EQUALVERIFY OP_CHECKSIG
@@ -465,5 +465,8 @@ module.exports = {
   pubKeyHashInput: pubKeyHashInput,
   scriptHashInput: scriptHashInput,
   multisigInput: multisigInput,
-  nullDataOutput: nullDataOutput
+  nullDataOutput: nullDataOutput,
+  scriptHashSuperOutput: scriptHashSuperOutput,
+  pubKeyHashSuperOutput: pubKeyHashSuperOutput,
+  scriptHashSuperOutput: scriptHashSuperOutput
 }
