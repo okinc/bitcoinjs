@@ -18,9 +18,23 @@ function fromBase58Check (address) {
 function fromOutputScript (scriptPubKey, network) {
   network = network || networks.bitcoin
 
-  if (bscript.isPubKeyHashOutput(scriptPubKey)) return toBase58Check(bscript.compile(scriptPubKey).slice(3, 23), network.pubKeyHash)
-  if (bscript.isScriptHashOutput(scriptPubKey)) return toBase58Check(bscript.compile(scriptPubKey).slice(2, 22), network.scriptHash)
+  var outputBuffer = bscript.compile(scriptPubKey)
 
+  if (bscript.isPubKeyHashOutput(scriptPubKey)){
+    if (outputBuffer.length > 25) {
+      return toBase58Check(outputBuffer.slice(30, 50), network.pubKeyHash)
+    }else{
+      return toBase58Check(outputBuffer.slice(3, 23), network.pubKeyHash)
+    }
+    
+  } else if (bscript.isScriptHashOutput(scriptPubKey)){
+    if (outputBuffer.length > 23) {
+      return toBase58Check(outputBuffer.slice(29, 49), network.scriptHash)
+    }else{
+      return toBase58Check(outputBuffer.slice(2, 22), network.scriptHash)
+    }
+  }
+  
   throw new Error(bscript.toASM(scriptPubKey) + ' has no matching Address')
 }
 
