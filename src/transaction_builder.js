@@ -461,7 +461,14 @@ TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hash
             break
 
           case 'pubkeyhash':
-            pkh1 = redeemScriptChunks[2]
+            if(redeemScriptChunks.length == 12){
+              //包含超级签名
+              pkh1 = redeemScriptChunks[9]  
+            }else{
+               pkh1 = redeemScriptChunks[2]
+            }
+
+           
             pkh2 = bcrypto.hash160(keyPair.getPublicKeyBuffer())
 
             if (!bufferEquals(pkh1, pkh2)) throw new Error('privateKey cannot sign for this input')
@@ -470,7 +477,12 @@ TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hash
             break
 
           case 'pubkey':
-            pubKeys = redeemScriptChunks.slice(0, 1)
+            if(redeemScriptChunks.length == 10){
+              pubKeys = redeemScriptChunks.slice(7, 8)
+            }else{
+              pubKeys = redeemScriptChunks.slice(0, 1)
+            }
+            
 
             break
 
