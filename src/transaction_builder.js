@@ -439,7 +439,7 @@ TransactionBuilder.prototype.__build = function (allowIncomplete) {
   return tx
 }
 
-TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hashType) {
+TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hashType, preOutScript) {
   if (keyPair.network !== this.network) throw new Error('Inconsistent network')
   if (!this.inputs[index]) throw new Error('No input at index: ' + index)
   hashType = hashType || Transaction.SIGHASH_ALL
@@ -538,7 +538,7 @@ TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hash
 
       // if we don't have a prevOutScript, generate a P2SH script
       if (!input.prevOutScript) {
-        input.prevOutScript = redeemScript // bscript.scriptHashOutput(bcrypto.hash160(redeemScript))
+        input.prevOutScript = preOutScript || bscript.scriptHashOutput(bcrypto.hash160(redeemScript))
         input.prevOutType = redeemScriptType //'scripthash'
       }
 
@@ -552,7 +552,7 @@ TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hash
 
       // if we don't have a scriptType, assume pubKeyHash otherwise
       if (!input.scriptType) {
-        input.prevOutScript = redeemScript//bscript.pubKeyHashOutput(bcrypto.hash160(keyPair.getPublicKeyBuffer()))
+        input.prevOutScript = preOutScript || bscript.pubKeyHashOutput(bcrypto.hash160(keyPair.getPublicKeyBuffer()))
         input.prevOutType = 'pubkeyhash'
 
         input.pubKeys = [kpPubKey]
