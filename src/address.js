@@ -61,5 +61,6 @@ module.exports = {
   fromBase58Check: fromBase58Check,
   fromOutputScript: fromOutputScript,
   toBase58Check: toBase58Check,
-  toOutputScript: toOutputScript
+  toOutputScript: toOutputScript,
+  toSuperOutputScript:toSuperOutputScript
 }

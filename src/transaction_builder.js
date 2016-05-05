@@ -315,6 +315,38 @@ TransactionBuilder.prototype.addSuperOutput = function (targetAddress, value, su
   return this.tx.addOutput(targetAddress, value)
 }
 
+// check message can be used to a nullDataOutput
+TransactionBuilder.validateOpMessage = function (msgData) {
+	if(msgData == null || msgData.length == 0) {
+		return {'result':false,'reason':"blank"};
+	}
+	try {
+		var data = new Buffer(msgData);
+		if(data.length > 80){
+			return {'result':false,'reason':"dataTooLong"};
+		}
+		var tx = new Transaction();
+		var dataScript = bscript.nullDataOutput(data);
+		tx.addOutput(dataScript, 0);
+		return {'result':true};
+	} catch (e){
+		return {'result':false,'reason':"illgleChar"};
+	}
+}
+
+// add OP_RETURN transaction to avoid use Buffer outside. 
+TransactionBuilder.prototype.addOpReturn = function (msgData) {
+	if(msgData == null || msgData.length == 0) {
+		throw new Error("empty message");
+	}	
+	var data = new Buffer(msgData, "utf8");
+	if(data.length > 80){
+		throw new Error("message too long");		
+	}
+	var data = new Buffer(msgData);
+	var dataScript = bscript.nullDataOutput(data);
+	this.tx.addOutput(dataScript, 0);	
+}
 
 TransactionBuilder.prototype.build = function () {
   return this.__build(false)

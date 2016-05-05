@@ -127,6 +127,10 @@ ECPair.prototype.toWIF = function () {
   return wif.encode(this.network.wif, this.d.toBuffer(32), this.compressed)
 }
 
+ECPair.prototype.getPublicKeyHex = function() { 
+  return this.Q.getEncoded(this.compressed).toString('hex');
+}
+
 ECPair.prototype.verify = function (hash, signature) {
   return ecdsa.verify(hash, signature, this.Q)
 }
