@@ -493,7 +493,7 @@ TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hash
             break
 
           case 'pubkeyhash':
-            if(redeemScriptChunks.length == 12){
+            if(redeemScriptChunks.length == 13){
               //包含超级签名
               pkh1 = redeemScriptChunks[9]  
             }else{
