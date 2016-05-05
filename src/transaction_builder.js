@@ -529,8 +529,8 @@ TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hash
 
       // if we don't have a prevOutScript, generate a P2SH script
       if (!input.prevOutScript) {
-        input.prevOutScript = bscript.scriptHashOutput(bcrypto.hash160(redeemScript))
-        input.prevOutType = 'scripthash'
+        input.prevOutScript = redeemScript // bscript.scriptHashOutput(bcrypto.hash160(redeemScript))
+        input.prevOutType = redeemScriptType  //'scripthash'
       }
 
       input.pubKeys = pubKeys
