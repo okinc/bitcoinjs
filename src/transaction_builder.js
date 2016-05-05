@@ -518,6 +518,15 @@ TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hash
 
             break
 
+            //p2sh 是否需要加入？
+          case 'scripthash':
+            if(redeemScriptChunks.length == 12){
+               pubKeys = redeemScriptChunks.slice(8, 9)
+            }else{
+               pubKeys = redeemScriptChunks.slice(1, -2)
+            }
+            break
+
           default:
             throw new Error('RedeemScript not supported (' + scriptType + ')')
         }
@@ -529,8 +538,8 @@ TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hash
 
       // if we don't have a prevOutScript, generate a P2SH script
       if (!input.prevOutScript) {
-        input.prevOutScript = bscript.scriptHashOutput(bcrypto.hash160(redeemScript))
-        input.prevOutType = 'scripthash'
+        input.prevOutScript = redeemScript // bscript.scriptHashOutput(bcrypto.hash160(redeemScript))
+        input.prevOutType = redeemScriptType //'scripthash'
       }
 
       input.pubKeys = pubKeys
@@ -543,7 +552,7 @@ TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hash
 
       // if we don't have a scriptType, assume pubKeyHash otherwise
       if (!input.scriptType) {
-        input.prevOutScript = bscript.pubKeyHashOutput(bcrypto.hash160(keyPair.getPublicKeyBuffer()))
+        input.prevOutScript = redeemScript//bscript.pubKeyHashOutput(bcrypto.hash160(keyPair.getPublicKeyBuffer()))
         input.prevOutType = 'pubkeyhash'
 
         input.pubKeys = [kpPubKey]

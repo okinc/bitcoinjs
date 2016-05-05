@@ -468,6 +468,6 @@ module.exports = {
   nullDataOutput: nullDataOutput,
   scriptHashSuperOutput: scriptHashSuperOutput,
   pubKeyHashSuperOutput: pubKeyHashSuperOutput,
-  scriptHashSuperOutput: scriptHashSuperOutput,
+  pubKeySuperOutput: pubKeySuperOutput,
   fromHex: fromHex
 }
