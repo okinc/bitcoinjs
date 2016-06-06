@@ -559,7 +559,7 @@ TransactionBuilder.prototype.sign = function (index, keyPair, redeemScript, hash
   }
 
   // ready to sign?
-  signatureScript = signatureScript || input.redeemScript || input.prevOutScript
+  signatureScript = signatureScript || input.prevOutScript || input.redeemScript
   var signatureHash = this.tx.hashForSignature(index, signatureScript, hashType)
 
   // enforce in order signing of public keys
