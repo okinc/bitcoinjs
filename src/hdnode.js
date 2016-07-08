@@ -1,5 +1,6 @@
 var base58check = require('bs58check')
 var bcrypto = require('./crypto')
+var randomBytes = require('randombytes')
 var createHmac = require('create-hmac')
 var typeforce = require('typeforce')
 var types = require('./types')
@@ -128,8 +129,8 @@ HDNode.fromBase58 = function (string, networks) {
 
 // get HDNode from a random seed.
 HDNode.fromRandomSeed = function (size, network, options) {
-	if (seed.length < 16) throw new TypeError('Seed should be at least 128 bits')
-	if (seed.length > 64) throw new TypeError('Seed should be at most 512 bits')
+	if (size < 16) throw new TypeError('Seed should be at least 128 bits')
+	if (size > 64) throw new TypeError('Seed should be at most 512 bits')
 	
 	options = options || {};
 	var rng = options.rng || randomBytes;
